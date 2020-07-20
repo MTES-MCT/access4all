@@ -21,6 +21,7 @@ L'environnement de développement recommandé est Ubuntu 20.04 LTS, disposant de
 
 Créez un fichier `.env` à la racine du dépôt, définissant les variables d'environnement suivantes :
 
+- `DATABASE_URL`: La chaîne de connexion à la base de données postgresql.
 - `DJANGO_SETTINGS_MODULE`: Le nom du module Python définissant la configuration Django. Sa valeur peut être `core.settings_prod` pour l'environnement de production, ou `core.settings_dev` pour l'environnement de développement local.
 - `EMAIL_HOST`: Host du serveur SMTP
 - `EMAIL_PORT`: Port du serveur SMTP
@@ -28,8 +29,8 @@ Créez un fichier `.env` à la racine du dépôt, définissant les variables d'e
 - `EMAIL_HOST_PASSWORD`: Mot de passe SMTP
 - `INSEE_API_CLIENT_KEY`: Clé client d'[API INSEE Sirene](https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/pages/item-info.jag?name=Sirene&version=V3&provider=insee)
 - `INSEE_API_SECRET_KEY`: Clé secrète d'API INSEE Sirene
-- `SECRET_KEY`: Une chaine de caractères unique permettant de garantir la sécurité des [opérations de chiffrement](https://docs.djangoproject.com/en/3.0/ref/settings/#secret-key)
-- `SENTRY_DSN`: La chaine de connexion à [Sentry](https://sentry.io/), l'outil de rapport d'erreur que nous utilisons en production.
+- `SECRET_KEY`: Chaîne de caractères unique permettant de garantir la sécurité des [opérations de chiffrement](https://docs.djangoproject.com/en/3.0/ref/settings/#secret-key)
+- `SENTRY_DSN`: Chaîne de connexion à [Sentry](https://sentry.io/), l'outil de rapport d'erreur que nous utilisons en production (le renseignement est donc optionnel dans l'environnement de développement local).
 
 **Notes :**
 
@@ -40,7 +41,7 @@ Créez un fichier `.env` à la racine du dépôt, définissant les variables d'e
 - La prise en compte de l'assignation des variables d'environnement définies dans ce fichier `.env` ne sont effectives qu'après avoir activé l'environnement virtuel de développement Python, au moyen de la commande `pipenv shell`. L'exécution de cette commande est également nécessaire pour prendre en compte chaque modification de leur valeur.
 - Vous pouvez lancer un serveur de développement en positionnant la variable d'environnement `DJANGO_SETTINGS_MODULE` manuellement à l'appel de la ligne de commande :
 
-      $ DJANGO_SETTINGS_MODULE=core.settings_prod ./run-dev.sh
+      $ DJANGO_SETTINGS_MODULE=core.settings_prod bin/run_dev
 
 ## Installation
 
@@ -49,54 +50,18 @@ $ pipenv shell
 $ pipenv install
 ```
 
-## Configurer la base de données
+## Configurer la base de données (développement)
 
-:warning: Assurez-vous de disposer des paquets `libpq-dev` et `python3.7-dev`:
-
-:bulb: Cette étape est inutile dans l'environnement de production Scalingo.
+Un jeu de scripts SQL sont fournis pour créer puis configurer la base de données dans l'environnement de développement local :
 
 ```
-sudo apt install libpq-dev python3.7-dev
+$ sudo -u postgres psql -a -f data/create_dev_db.sql
+$ sudo -u postgres psql -a -f data/install_db_extensions.sql
 ```
 
-Connectez-vous à postgres en ligne de commande :
+> **Note:** Ignorez les erreurs du type _could not change directory to (...) Permission denied_, qui sont attendues et non-bloquantes.
 
-```
-$ sudo su - postgres
-```
-
-Puis lancez `psql`:
-
-```
-$ psql
-```
-
-Dans `psql`, lancez ces commandes :
-
-```
-CREATE DATABASE access4all;
-CREATE USER access4all WITH PASSWORD 'access4all';
-ALTER ROLE access4all SET client_encoding TO 'utf8';
-ALTER ROLE access4all SET default_transaction_isolation TO 'read committed';
-ALTER ROLE access4all SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE access4all TO access4all;
-\c access4all;
-CREATE EXTENSION postgis;
-CREATE EXTENSION pg_trgm;
-CREATE EXTENSION unaccent;
-CREATE TEXT SEARCH CONFIGURATION french_unaccent( COPY = french );
-ALTER TEXT SEARCH CONFIGURATION french_unaccent
-ALTER MAPPING FOR hword, hword_part, word
-WITH unaccent, french_stem;
-```
-
-> Note: pour jouer les tests, vous devez également exécuter cette commande :
->
->     ALTER ROLE access4all SUPERUSER;
->
-> Cette commande ne doit **jamais** être exécutée sur la base de production.
-
-Puis, initialisez la base de données :
+Ceci fait, initialisez la base de données :
 
 ```
 $ python manage.py migrate
@@ -116,19 +81,21 @@ $ python manage.py loaddata erp/fixtures/communes.json
 
 ## Lancer le serveur de développement
 
+À la racine du projet, exécutez :
+
 ```
-$ ./run-dev.sh
+$ bin/run_dev
 ```
 
-L'application est alors accessible à l'adresse [http://localhost:8000/](http://localhost:8000/).
+L'application est alors servie à l'adresse [http://localhost:8000/](http://localhost:8000/).
 
-**Note :** Il est important d'utiliser le script `run-dev.sh` plutôt que la commande usuelle `manage.py runserver` fournie par Django, afin de prendre en compte la compilation des fichiers [Sass](https://sass-lang.com/) à la volée.
+**Note :** Il est important d'utiliser le script `bin/run_dev` plutôt que la commande usuelle `manage.py runserver` fournie par Django, afin de prendre en compte la compilation des fichiers [Sass](https://sass-lang.com/) à la volée.
 
-## Configuration locale de dévelopement
+## Configuration locale de développement
 
 La configuration de développement des paramètres applicatifs se fait dans le fichier `core/settings_dev.py`. Vous pouvez également définir votre propre module sur le même modèle et l'importer par le biais de la variable d'environnement `DJANGO_SETTINGS_MODULE`.
 
-N'oubliez pas de relancer `./run-dev.sh` pour prendre en compte tout changement effectué à ce niveau.
+N'oubliez pas de relancer `bin/run_dev` pour prendre en compte tout changement effectué à ce niveau.
 
 ## Générer et appliquer les migrations du modèle de données
 
@@ -227,9 +194,13 @@ Au besoin, redémarrez le conteneur applicatif pour prendre en compte une évent
 $ scalingo --app access4all restart
 ```
 
-## Activer l'extension postgis
+## Installer les extensions postgresql :
 
-Les instructions de mise en place et d'activation postgis sont disponibles [à cette adresse](https://doc.scalingo.com/languages/python/django/geodjango).
+Un script dédié est disponible :
+
+```
+$ scalingo xxx data/install_db_extensions.sql
+```
 
 ## Déployer l'application
 
