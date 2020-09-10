@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="{% static "icons/styles.css" %}">
     <link rel="stylesheet" href="{% static "css/style.css" %}">
     {% block stylesheet_extras %}{% endblock %}
+    <script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=Object.assign%2CIntersectionObserver"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
     <script src="https://browser.sentry-cdn.com/5.15.5/bundle.min.js"
         integrity="sha384-wF7Jc4ZlWVxe/L8Ji3hOIBeTgo/HwFuaeEfjGmS3EXAG7Y+7Kjjr91gJpJtr+PAT" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" crossorigin=""
@@ -37,6 +39,10 @@
       <span class="skippy-text">Aller au contenu principal</span>
     </a>
     {% block content %}{% endblock %}
+    <script>
+      const observer = lozad();
+      observer.observe();
+    </script>
     {% include "common/matomo.html" %}
     {% include "common/sentry.html" %}
   </body>

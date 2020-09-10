@@ -103,8 +103,8 @@
             <div class="card shadow-sm mb-2">
               <div class="card-body p-3">
                 <h3 class="h6 m-0">
-                  <img alt="" class="mb-1 mr-1"
-                    src="{% static "/img/activites/png/" %}{{ erp.get_activite_icon }}.n.16.png">
+                  <img alt="" class="lozad mb-1 mr-1"
+                    data-src="{% static "/img/activites/png/" %}{{ erp.get_activite_icon }}.n.16.png">
                   <a href="{{ erp.get_absolute_url }}">{{ erp.nom }}</a>
                 </h3>
                 {% if localize == "1" and erp.distance %}
@@ -165,8 +165,8 @@
         <div class="col mb-4">
           <div class="card shadow-sm">
             <a class="d-none d-md-block" href="{% url 'commune' commune.slug %}" tabindex="-1">
-              <img class="card-img-top" alt="{{ commune.nom }}"
-                src="https://api.mapbox.com/styles/v1/mapbox/light-v10/static/{{ commune.geom.coords.0 }},{{ commune.geom.coords.1 }},11,0,50/348x139?access_token=pk.eyJ1IjoibjFrMCIsImEiOiJjazdkOTVncDMweHc2M2xyd2Nhd3BueTJ5In0.-Mbvg6EfocL5NqjFbzlOSw">
+              <img class="lozad card-img-top" alt="{{ commune.nom }}"
+                data-src="https://api.mapbox.com/styles/v1/mapbox/light-v10/static/{{ commune.geom.coords.0 }},{{ commune.geom.coords.1 }},11,0,50/348x139?access_token=pk.eyJ1IjoibjFrMCIsImEiOiJjazdkOTVncDMweHc2M2xyd2Nhd3BueTJ5In0.-Mbvg6EfocL5NqjFbzlOSw">
             </a>
             <div class="card-body p-3">
               <small class="text-muted">{{ commune.departement_nom }}</small>
@@ -193,8 +193,8 @@
         <div class="list-group-flush" id="home-latest-erps-list">
           {% for erp in latest %}
           <a href="{{ erp.get_absolute_url }}" class="list-group-item list-group-item-action">
-            <img alt="" class="mb-1 mr-1"
-              src="{% static "/img/activites/png/" %}{{ erp.get_activite_icon }}.n.16.png">
+            <img alt="" class="lozad mb-1 mr-1"
+              data-src="{% static "/img/activites/png/" %}{{ erp.get_activite_icon }}.n.16.png">
             {{ erp.commune }} {% if erp.activite %}&raquo; <span class="text-muted">{{ erp.activite.nom}}</span>{% endif %}
             <br><strong>{{ erp.nom }}</strong>
           </a>
