@@ -1059,7 +1059,11 @@ class Accessibilite(models.Model):
     )
 
     def __str__(self):
-        return "Caractéristiques d'accessibilité de cet ERP"
+        return (
+            f"Accessibilité de l'ERP ({self.erp})"
+            if self.erp
+            else "Accessibilité de l'ERP"
+        )
 
     def get_history(self):
         return _get_history(self.get_versions())

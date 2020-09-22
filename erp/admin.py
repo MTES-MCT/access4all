@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from reversion.admin import VersionAdmin
+from reversion.models import Version
 
 from .departements import DEPARTEMENTS
 from .forms import (
@@ -55,6 +56,43 @@ class CustomUserAdmin(UserAdmin):
 # replace the default UserAdmin with yours
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
+
+
+@admin.register(Version)
+class ReversionAdmin(admin.ModelAdmin):
+    list_display = ("get_label", "get_diff", "get_user", "get_date_created")
+    list_per_page = 20
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.select_related("revision", "revision__user").exclude(
+            revision__isnull=True
+        )
+        return queryset
+
+    def get_label(self, obj):
+        if obj.object is None:
+            return f"Supprimé: {obj.object_repr}"
+        return mark_safe(f'<a href="xxx">{str(obj.object)}</a>')
+
+    get_label.short_description = "Objet"
+
+    def get_diff(self, obj):
+        return "todo"
+
+    get_diff.short_description = "Modifications"
+
+    def get_user(self, obj):
+        return obj.revision.user if obj.revision else "-"
+
+    get_user.short_description = "Date"
+    get_user.admin_order_field = "revision__user"
+
+    def get_date_created(self, obj):
+        return obj.revision.date_created if obj.revision else "-"
+
+    get_date_created.short_description = "Date"
+    get_date_created.admin_order_field = "revision__date_created"
 
 
 @admin.register(Activite)
