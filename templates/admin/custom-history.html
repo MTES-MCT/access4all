@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h2>Historique des modifications</h2>
+<div id="changelist" class="results">
+  <table id="result_list">
+    <tbody>
+    {% for entry in history %}
+      <tr>
+        <td>{{ entry.revision.date_created }}</td>
+        <td>{{ entry.revision.object_repr }}</td>
+        <td>{{ entry.revision.user }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

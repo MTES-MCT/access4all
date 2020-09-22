@@ -10,10 +10,12 @@ from django.contrib.gis.admin import OSMGeoAdmin
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
+from django.template.response import TemplateResponse
+from django.urls import path, reverse
 from django.utils.safestring import mark_safe
 
 from reversion.admin import VersionAdmin
+from reversion.models import Version
 
 from .departements import DEPARTEMENTS
 from .forms import (
@@ -350,6 +352,21 @@ class ErpAdmin(OSMGeoAdmin, nested_admin.NestedModelAdmin, VersionAdmin):
         ),
         ("Contact", {"fields": ["telephone", "site_internet", "contact_email"],},),
     ]
+
+    def get_urls(self):
+        urls = super().get_urls()
+        history_urls = [
+            path(
+                "custom-history/", self.admin_site.admin_view(self.custom_history_view)
+            )
+        ]
+        # always place added urls first
+        return history_urls + urls
+
+    def custom_history_view(self, request):
+        history = Version.objects.all()[:25]
+        context = {"history": history}
+        return TemplateResponse(request, "admin/custom-history.html", context)
 
     def get_nom(self, obj):
         icon = ""
