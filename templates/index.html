@@ -10,10 +10,10 @@
   {% endblock %}
 
 {% block top_fluid_content %}
-  <section class="container-fluid py-5 bg-primary">
+  <section class="container-fluid bg-primary">
     <div class="container">
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-6 py-5 pr-4">
           <h2 class="text-light">Découvrez l'accessibilité des établissements autour de vous</h2>
           <p class="text-light py-3">{{ SITE_NAME.title }} vous permet d'accéder aux <strong>informations essentielles d'accessibilité</strong> des établissements recevant du public en France.</p>
           <form action="{% url "home" %}#results">
@@ -99,22 +99,18 @@
           })(navigator.geolocation);
           </script>
         </div>
-        <div class="col-lg-6 p-3 d-none d-lg-inline text-center">
-          <img src="{% static "/img/home.svg" %}" width="100%"
-            alt="Illustration présentant des personnages en situation de handicap dans un paysage urbain">
+        <div class="col-lg-6 d-none d-lg-inline text-center" style="background-image:url('{% static "/img/homewheel.jpg" %}');background-repeat: no-repeat;background-size:cover;background-position: bottom center;">
         </div>
       </div>
     </div>
   </section>
 
-  <section class="container-fluid py-5 bg-light">
+  <section class="container-fluid bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-lg-6 p-3 d-none d-lg-inline text-center">
-          <img src="{% static "/img/home2.svg" %}" width="100%"
-            alt="Illustration présentant des personnages en situation de handicap dans un paysage urbain">
+        <div class="col-lg-6 d-none d-lg-inline text-center" style="background-image:url('{% static "/img/homewheel2.jpg" %}');background-repeat: no-repeat;background-size:cover;background-position: bottom right;">
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-6 py-5 pl-4">
           <h2>Participez à l'enrichissement des données d'accessibilité</h2>
           <p class="pt-2 pb-1">
             {{ SITE_NAME.title }} est une <strong>plateforme citoyenne collaborative ouverte à tous</strong>.
