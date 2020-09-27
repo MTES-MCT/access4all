@@ -34,72 +34,14 @@
               <input type="checkbox" class="custom-control-input" name="localize" id="localize" value="1"
                 {% if localize == "1" %}checked{% endif %}>
               <label class="custom-control-label text-light" for="localize">
-                Rechercher autour de ma position géographique actuelle <strong id="loc" aria-label="Mon emplacement"></strong>
+                Rechercher autour de ma position géographique actuelle
+                <strong class="d-block" id="loc" aria-label="Mon emplacement"></strong>
               </label>
             </div>
           </form>
-          <script>
-          (function(geolocation) {
-            if (!geolocation) {
-              document.querySelector("#loc-field").innerHTML = [
-                '<div class="text-danger">',
-                  '<i aria-hidden="false" class="icon icon-exclamation-circle"></i> ',
-                  "La géolocalisation n'est pas disponible sur votre navigateur.",
-                '</div>',
-              ].join("");
-              return;
-            }
-            function listenToLocCheckboxChange() {
-              return function(event) {
-                processLocCheckbox(event.target);
-              }
-            }
-            function processLocCheckbox(node) {
-              if (!node.checked) {
-                document.querySelector("#loc").innerText = "";
-                document.querySelector("input[name=lat]").value = null;
-                document.querySelector("input[name=lon]").value = null;
-              } else {
-                geolocation.getCurrentPosition(function(position) {
-                  const lat = position.coords.latitude;
-                  const lon = position.coords.longitude;
-                  fetch("https://api-adresse.data.gouv.fr/reverse/?lon=" + lon + "&lat=" + lat + "&type=street")
-                    .then(function(response) {
-                      return response.json()
-                    })
-                    .then(function(json) {
-                      let label;
-                      try {
-                        label = "(" + json.features[0].properties.label + ")"
-                      } catch (e) {
-                        label = "(" + lat + ", " + lon + ")";
-                      }
-                      const loc = document.querySelector("#loc");
-                      loc.innerText = label;
-                      loc.setAttribute("role", "status");
-                      document.querySelector("input[name=lat]").value = lat;
-                      document.querySelector("input[name=lon]").value = lon;
-                    })
-                    .catch(function(err) {
-                      console.warn("Le service de géopositionnement inverse a retourné une erreur : " + err);
-                    });
-                }, function(err) {
-                  alert("Nous n'avons pas pu déterminer votre position géographique.")
-                });
-              }
-            }
-            window.addEventListener("DOMContentLoaded", function() {
-              const locCheckbox = document.querySelector("#localize");
-              locCheckbox.addEventListener("change", listenToLocCheckboxChange());
-              setTimeout(function() {
-                // Note: a timeout is required in order to reprocess the form state after navigating back
-                processLocCheckbox(locCheckbox);
-              }, 10);
-            });
-          })(navigator.geolocation);
-          </script>
         </div>
-        <div class="col-lg-6 d-none d-lg-inline text-center" style="background-image:url('{% static "/img/homewheel.jpg" %}');background-repeat: no-repeat;background-size:cover;background-position: bottom center;">
+        <div class="col-lg-6 d-none d-lg-inline text-center"
+          style="background-image:url('{% static "/img/linea9.svg" %}');background-position: 35% bottom;background-repeat: no-repeat;background-size:cover;">
         </div>
       </div>
     </div>
@@ -108,7 +50,8 @@
   <section class="container-fluid bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-lg-6 d-none d-lg-inline text-center" style="background-image:url('{% static "/img/homewheel2.jpg" %}');background-repeat: no-repeat;background-size:cover;background-position: bottom right;">
+        <div class="col-lg-6 d-none d-lg-inline text-center"
+          style="background-image:url('{% static "/img/homewheel.jpg" %}');background-position: center bottom;background-repeat: no-repeat;background-size:cover;">
         </div>
         <div class="col-lg-6 py-5 pl-4">
           <h2>Participez à l'enrichissement des données d'accessibilité</h2>
@@ -127,6 +70,67 @@
       </div>
     </div>
   </section>
+
+  <script>
+  (function(geolocation) {
+    if (!geolocation) {
+      document.querySelector("#loc-field").innerHTML = [
+        '<div class="text-danger">',
+          '<i aria-hidden="false" class="icon icon-exclamation-circle"></i> ',
+          "La géolocalisation n'est pas disponible sur votre navigateur.",
+        '</div>',
+      ].join("");
+      return;
+    }
+    function listenToLocCheckboxChange() {
+      return function(event) {
+        processLocCheckbox(event.target);
+      }
+    }
+    function processLocCheckbox(node) {
+      if (!node.checked) {
+        document.querySelector("#loc").innerText = "";
+        document.querySelector("input[name=lat]").value = null;
+        document.querySelector("input[name=lon]").value = null;
+      } else {
+        geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          fetch("https://api-adresse.data.gouv.fr/reverse/?lon=" + lon + "&lat=" + lat + "&type=street")
+            .then(function(response) {
+              return response.json()
+            })
+            .then(function(json) {
+              let label;
+              try {
+                label = "(" + json.features[0].properties.label + ")"
+              } catch (e) {
+                label = "(" + lat + ", " + lon + ")";
+              }
+              const loc = document.querySelector("#loc");
+              loc.innerText = label;
+              loc.setAttribute("role", "status");
+              document.querySelector("input[name=lat]").value = lat;
+              document.querySelector("input[name=lon]").value = lon;
+            })
+            .catch(function(err) {
+              console.warn("Le service de géopositionnement inverse a retourné une erreur : " + err);
+            });
+        }, function(err) {
+          alert("Nous n'avons pas pu déterminer votre position géographique.")
+        });
+      }
+    }
+    window.addEventListener("DOMContentLoaded", function() {
+      const locCheckbox = document.querySelector("#localize");
+      locCheckbox.addEventListener("change", listenToLocCheckboxChange());
+      setTimeout(function() {
+        // Note: a timeout is required in order to reprocess the form state after navigating back
+        processLocCheckbox(locCheckbox);
+      }, 10);
+    });
+  })(navigator.geolocation);
+  </script>
 {% endblock %}
 
 {% block editorial_content %}
