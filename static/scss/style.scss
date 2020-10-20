@@ -470,6 +470,7 @@ $viewport-xl: 1200px;
   /* Steps progress */
 
   .StepProgress {
+    margin-bottom: 0;
     position: relative;
     padding-left: 45px;
     list-style: none;
@@ -484,12 +485,20 @@ $viewport-xl: 1200px;
     width: 10px;
     height: 100%;
     border-left: 2px solid #ccc;
+    @media screen and (max-width: $viewport-lg) {
+      border: none;
+    }
   }
 
   .StepProgress-item {
     position: relative;
     counter-increment: list;
     padding-top: 4px;
+    @media screen and (max-width: $viewport-lg) {
+      &:not(.current) {
+        display: none;
+      }
+    }
   }
 
   .StepProgress-item:not(:last-child) {
@@ -510,7 +519,7 @@ $viewport-xl: 1200px;
     border-radius: 50%;
     border: 2px solid #ccc;
     color: #999;
-    content: counter(list);
+    content: attr(data-step);
     display: inline-block;
     font-size: 18px;
     font-weight: bold;
@@ -526,6 +535,9 @@ $viewport-xl: 1200px;
 
   .StepProgress-item.is-done::before {
     border-left: 2px solid $success;
+    @media screen and (max-width: $viewport-lg) {
+      border: none;
+    }
   }
 
   .StepProgress-item.is-done::after {
@@ -548,6 +560,9 @@ $viewport-xl: 1200px;
 
   .StepProgress-item.current::before {
     border-left: 2px solid $success;
+    @media screen and (max-width: $viewport-lg) {
+      border: none;
+    }
   }
 
   .StepProgress-item.current::after {
