@@ -135,6 +135,42 @@
       {% if search_results %}
       {% include "search-results.html" %}
       {% else %}
+      <div class="mb-4">
+        <div id="map-home" style="width:100%;height:600px"></div>
+        <script>
+        var map = L.map("map-home").setView([43.6580058, 3.911346], 6);
+
+        a4a.createTiles().addTo(map);
+
+        function createIcon(iconName, highlight) {
+          const size = highlight ? 48 : 32;
+          const options = {
+            iconUrl: "/static/img/mapicons.svg#" + iconName,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size],
+            popupAnchor: [0, -size],
+            tooltipAnchor: [size / 2, -28],
+            className: "shadow-sm act-icon act-icon-rounded act-icon-" + size + (highlight && " invert" || ""),
+          };
+          return L.icon(options);
+        }
+
+        L.marker([43.6570046,3.9136314], {
+          icon: createIcon("bakery", false)
+        }).addTo(map)
+            .bindPopup('4 grand rue jacou')
+            .openPopup();
+        L.marker([43.6580058, 3.911346], {
+          icon: createIcon("car-learn", true)
+        }).addTo(map)
+            .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+            .openPopup();
+        L.marker([43.6592167, 3.9093397]).addTo(map)
+            .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+            .openPopup();
+        </script>
+      </div>
+
       <h2 class="sr-only">Communes renseignées</h2>
       <div class="row row-cols-1 row-cols-sm-2" id="home-communes-list">
         {% for commune in communes %}
