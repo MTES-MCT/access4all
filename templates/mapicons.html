@@ -15,9 +15,7 @@
   <div id="map-demo" style="width:100%;height:400px"></div>
   <script>
   const map = a4a.createMap("map-demo", {
-    dragging: false,
-    scrollWheelZoom: false
-  }).setView([43.6580058, 3.911346], 16);
+  }).setView([43.6570046,3.9136314], 18);
 
   function createIcon(iconName, highlight) {
     const size = highlight ? 48 : 32;
@@ -32,32 +30,50 @@
     return L.icon(options);
   }
 
-  L.marker([43.6570046,3.9136314], {
-    icon: createIcon("bakery", false)
+  function createMarker(iconName, highlight) {
+    return L.divIcon({
+      className: "act-marker " + (highlight && " invert" || ""),
+      html: '<img alt="" src="/static/img/mapicons.svg#' + iconName + '">',
+      iconSize: [32, 32],
+      iconAnchor: [16, 40],
+      popupAnchor: [0, -34],
+      tooltipAnchor: [16, -32],
+    });
+  }
+
+  L.marker([43.657028, 3.913557], {
+    icon: createMarker("bakery", false)
   }).addTo(map)
-      .bindPopup('4 grand rue jacou')
+      .bindPopup('Marqueur inactif')
       .openPopup();
-  L.marker([43.6580058, 3.911346], {
-    icon: createIcon("car-learn", true)
-  }).addTo(map)
-      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-      .openPopup();
-  L.marker([43.6592167, 3.9093397]).addTo(map)
-      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-      .openPopup();
+//  L.marker([43.6570046,3.9136314], {
+//    icon: createIcon("bakery", false)
+//  }).addTo(map)
+//      .bindPopup('Marqueur inactif')
+//      .openPopup();
+//  L.marker([43.6580058, 3.911346], {
+//    icon: createMarker("car-learn", true)
+//  }).addTo(map)
+//      .bindPopup('Marqueur actif')
+//      .openPopup();
+
   </script>
 </div>
 
 <h3 class="mb-4">Icônes <small class="text-muted">{{ mapicons|length }} icônes</small></h3>
 
-<div class="row row-cols-3 row-cols-sm-4 row-cols-lg-6 row-cols-xl-8 list-unstyled list">
+<div class="row row-cols row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 list-unstyled list">
   {% for icon in mapicons %}
   <div class="text-center mb-4">
-    <img class="act-icon" alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
     <img class="act-icon act-icon-32" alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
     <img class="act-icon act-icon-32 act-icon-rounded" alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
-    <img class="act-icon act-icon-24" alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
-    <img class="act-icon act-icon-16" alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
+    <img class="act-icon act-icon-32 act-icon-rounded invert" alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
+    <div class="act-marker">
+      <img alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
+    </div>
+    <div class="act-marker invert">
+      <img alt="" src="{% static "img/mapicons.svg" %}#{{ icon }}">
+    </div>
     <br>
     <small class="text-muted">{{ icon }}</small>
   </div>

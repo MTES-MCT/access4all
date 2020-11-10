@@ -20,6 +20,18 @@ window.a4a = (function () {
     return L.icon(options);
   }
 
+  function createMarker(highlight, features) {
+    const iconName = features.activite__vector_icon || "building";
+    return L.divIcon({
+      className: "act-marker " + (highlight && " invert" || ""),
+      html: '<img alt="" src="/static/img/mapicons.svg#' + iconName + '">',
+      iconSize: [32, 32],
+      iconAnchor: [16, 40],
+      popupAnchor: [0, -34],
+      tooltipAnchor: [16, -32],
+    });
+  }
+
   // see https://leafletjs.com/examples/geojson/
   function onEachFeature(feature, layer) {
     const properties = feature.properties;
@@ -46,7 +58,7 @@ window.a4a = (function () {
     return L.marker(coords, {
       alt: props.nom,
       title: (props.activite__nom ? props.activite__nom + ": " : "") + props.nom,
-      icon: createIcon(
+      icon: createMarker(
         currentPk && Number(props.pk) === currentPk,
         props
       ),
